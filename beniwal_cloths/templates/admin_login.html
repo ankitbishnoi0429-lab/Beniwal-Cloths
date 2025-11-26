@@ -3,14 +3,40 @@
 <div class="login-container">
     <h2>Admin Access</h2>
     <p style="text-align: center; color: #666; margin-bottom: 20px;">Enter your admin token</p>
-    <form method="post">
+    <form method="post" id="admin-login-form" onsubmit="return prepareToken()">
         <div class="input-group">
-            <label>Admin Token:</label>
-            <input type="text" id="token" name="token" placeholder="@7900012929" required autofocus/>
+            <label>Admin Token (or phone):</label>
+            <input type="text" id="token_visible" placeholder="@7900012929 or 7900012929" required autofocus/>
+            <input type="hidden" id="token_hidden" name="token" />
         </div>
         
         <button type="submit" class="btn-login">Login</button>
     </form>
+    <script>
+    // Normalize visible input to hidden token value before submit
+    function prepareToken(){
+        try{
+            var v = document.getElementById('token_visible').value.trim();
+            if(!v) return false;
+            // if user entered digits only, prefix @
+            if(/^[0-9]+$/.test(v)){
+                v = '@' + v;
+            }
+            // if user entered with leading @, keep as is
+            // set hidden field
+            document.getElementById('token_hidden').value = v;
+            return true;
+        }catch(e){
+            return true;
+        }
+    }
+    // allow pressing Enter to submit even when focused on input
+    document.getElementById('token_visible').addEventListener('keydown', function(e){
+        if(e.key === 'Enter'){
+            // let form submit handle normalization
+        }
+    });
+    </script>
 </div>
 
 <style>
